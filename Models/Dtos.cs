@@ -37,14 +37,14 @@ namespace AdminServerStub.Models
 
     public class CommandRequest
     {
-        public required string CommandId { get; set; }
-        public required string TargetAgentId { get; set; }
-        public int CommandType { get; set; }
-        public Dictionary<string, string> Parameters { get; set; } = new();
-        public DateTime Timestamp { get; set; }
-        public int Priority { get; set; }
-        public int TimeoutSeconds { get; set; }
-        public bool RequireConfirmation { get; set; }
+        [JsonPropertyName("commandId")] public required string CommandId { get; set; }
+        [JsonPropertyName("targetAgentId")] public required string TargetAgentId { get; set; }
+        [JsonPropertyName("commandType")] public string CommandType { get; set; } = string.Empty;
+        [JsonPropertyName("parameters")] public Dictionary<string, string> Parameters { get; set; } = new();
+        [JsonPropertyName("timestamp")] public DateTime Timestamp { get; set; }
+        [JsonPropertyName("priority")] public int Priority { get; set; }
+        [JsonPropertyName("timeoutSeconds")] public int TimeoutSeconds { get; set; }
+        [JsonPropertyName("requireConfirmation")] public bool RequireConfirmation { get; set; }
     }
 
     public class CommandResponse

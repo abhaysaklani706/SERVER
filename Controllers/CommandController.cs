@@ -12,6 +12,31 @@ namespace AdminServerStub.Controllers
     [Route("api/[controller]")]
     public class CommandController : ControllerBase
     {
+        [HttpPost("queue")]
+        public ActionResult<object> Queue([FromBody] CommandRequest command)
+        {
+            if (command == null)
+                return BadRequest();
+
+            if (string.IsNullOrWhiteSpace(command.TargetAgentId))
+                return BadRequest("targetAgentId required");
+
+            // Validate that the agent exists if we have it in our store
+            if (!InMemoryStore.Agents.ContainsKey(command.TargetAgentId))
+                return BadRequest("unknown agentId");
+
+            if (string.IsNullOrWhiteSpace(command.CommandId))
+                command.CommandId = Guid.NewGuid().ToString();
+
+            if (command.Timestamp == default)
+                command.Timestamp = DateTime.UtcNow;
+
+            var queue = InMemoryStore.PendingCommands.GetOrAdd(command.TargetAgentId, _ => new());
+            queue.Enqueue(command);
+
+            return Ok(new { commandId = command.CommandId });
+        }
+
         [HttpPost]
         public ActionResult<CommandRequest> Execute([FromBody] CommandRequest command)
         {
